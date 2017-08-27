@@ -8,8 +8,5 @@
   },
   "keywords": [],
   "author": "whmyrick",
-  "license": "ISC",
-  "dependencies": {
-    "mongodb": "^2.2.31"
-  }
+  "license": "ISC"
 }
