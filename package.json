@@ -11,7 +11,7 @@
   "engines": {
     "node": "6.2.2"
   },
-  "author": "",
+  "author": "whmyrick",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
