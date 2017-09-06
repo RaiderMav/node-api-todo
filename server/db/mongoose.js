@@ -1,6 +1,6 @@
 var mongoose = require('mongoose')
 
-let promise = mongoose.connect(process.env.MONGODB_URI  {
+let promise = mongoose.connect(process.env.MONGODB_URI, {
   useMongoClient: true
 })
 
