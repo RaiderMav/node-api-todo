@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+var mongoose = require('mongoose')
 
 let promise = mongoose.connect(process.env.MONGODB_URI  {
   useMongoClient: true

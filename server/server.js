@@ -1,14 +1,18 @@
-require('./config/config')
-const express = require('express'),
-  bodyParser = require('body-parser'),
-  { mongoose } = require('./db/mongoose'),
-  { Todo } = require('./models/todo'),
-  { User } = require('./models/user'),
-  { ObjectID } = require('mongodb'),
-  app = express(),
-  PORT = process.env.PORT,
-  _ = require('lodash')
+rrequire('./config/config')
 
+const _ = require('lodash')
+const express = require('express')
+const bodyParser = require('body-parser')
+const {ObjectID} = require('mongodb')
+
+var {mongoose} = require('./db/mongoose')
+var {Todo} = require('./models/todo')
+var {User} = require('./models/user')
+
+var app = express()
+const port = process.env.PORT
+
+app.use(bodyParser.json())
 app.use(bodyParser.json())
 
 app.post('/todos', (req, res) => {
