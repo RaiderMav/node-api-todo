@@ -1,25 +1,25 @@
-const mongoose = require('mongoose'),
-  jwt = require('jsonwebtoken'),
-  validator = require('validator'),
-  _ = require('lodash'),
-  bcrypt = require('bcryptjs')
+const mongoose = require('mongoose')
+const validator = require('validator')
+const jwt = require('jsonwebtoken')
+const _ = require('lodash')
+const bcrypt = require('bcryptjs')
 
 var UserSchema = new mongoose.Schema({
   email: {
     type: String,
-    minLength: 1,
-    trim: true,
     required: true,
+    trim: true,
+    minlength: 1,
     unique: true,
     validate: {
       validator: validator.isEmail,
-      message: `${this.email} is not a valid email`
+      message: '{VALUE} is not a valid email'
     }
   },
   password: {
     type: String,
-    required: true,
-    minLength: 6
+    require: true,
+    minlength: 6
   },
   tokens: [{
     access: {
@@ -34,8 +34,8 @@ var UserSchema = new mongoose.Schema({
 })
 
 UserSchema.methods.toJSON = function () {
-  let user = this
-  let userObject = user.toObject()
+  var user = this
+  var userObject = user.toObject()
 
   return _.pick(userObject, ['_id', 'email'])
 }
@@ -43,15 +43,9 @@ UserSchema.methods.toJSON = function () {
 UserSchema.methods.generateAuthToken = function () {
   var user = this
   var access = 'auth'
-  var token = jwt.sign({
-    _id: user._id.toHexString(),
-    access
-  }, process.env.JWT_SECRET).toString()
+  var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString()
 
-  user.tokens.push({
-    access,
-    token
-  })
+  user.tokens.push({access, token})
 
   return user.save().then(() => {
     return token
@@ -59,7 +53,8 @@ UserSchema.methods.generateAuthToken = function () {
 }
 
 UserSchema.methods.removeToken = function (token) {
-  let user = this
+  var user = this
+
   return user.update({
     $pull: {
       tokens: {token}
@@ -76,6 +71,7 @@ UserSchema.statics.findByToken = function (token) {
   } catch (e) {
     return Promise.reject()
   }
+
   return User.findOne({
     '_id': decoded._id,
     'tokens.token': token,
@@ -85,11 +81,14 @@ UserSchema.statics.findByToken = function (token) {
 
 UserSchema.statics.findByCredentials = function (email, password) {
   var User = this
+
   return User.findOne({email}).then((user) => {
     if (!user) {
       return Promise.reject()
     }
+
     return new Promise((resolve, reject) => {
+      // Use bcrypt.compare to compare password and user.password
       bcrypt.compare(password, user.password, (err, res) => {
         if (res) {
           resolve(user)
@@ -102,7 +101,7 @@ UserSchema.statics.findByCredentials = function (email, password) {
 }
 
 UserSchema.pre('save', function (next) {
-  let user = this
+  var user = this
 
   if (user.isModified('password')) {
     bcrypt.genSalt(10, (err, salt) => {
@@ -118,4 +117,4 @@ UserSchema.pre('save', function (next) {
 
 var User = mongoose.model('User', UserSchema)
 
-module.exports = { User }
+module.exports = {User}
